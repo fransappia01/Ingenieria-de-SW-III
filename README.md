@@ -1,5 +1,6 @@
 # Ingenieria-de-SW-III
 
-Hola probando
+Repositorio para ejercicios de la materia
 
-Modificando linea para generar conflicto
+- Francisco Sappia
+- 1911857
