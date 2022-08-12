@@ -67,7 +67,9 @@ Hacer commit y subir el cambio a master a github.
 
 • Opcional - Completar el resto de los ejercicios para ser un experto en Git!!!
 
+![6](/TP1/img/6.png)
 
+                        TP1✔️
 
 
 
