@@ -203,3 +203,8 @@ exit
 - Explicar que se logro con el comando `docker run` y `docker exec` ejecutados en este ejercicio.
 
 
+docker run inicia una instancia de postgres, definiendo la variable de entorno password para el superusuario (por defecto postgres), también se especifica en qué puerto será publicado al host.
+
+docker exec ejecuta un comando en un contenedor en ejecución, en este caso en my-postgres. En este caso se abre en modo interactivo debido al parámetro -i.
+
+Mientras run inicia un nuevo contenedor, exec inicia un proceso o comando dentro de un contenedor existente y en ejecución.
