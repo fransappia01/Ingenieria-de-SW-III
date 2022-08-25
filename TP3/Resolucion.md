@@ -137,13 +137,30 @@ volumes:
 ```
 
   - Ejecutar `docker-compose up -d`
+
+![3](/TP3/img/3.png)
+
+En esta parte hay que tener cuenta que debo estar parado sobre la carpeta donde se encuentra el archivo .yml. Tambien tener cuidado con las sangrias en ese archivo (sino me da error).
+
   - Acceder a la url http://localhost:5000/
+
+![3.1](/TP3/img/3.1.png)
+
   - Ejecutar `docker ps`, `docker network ls` y `docker volume ls`
+
+![3.2](/TP3/img/3.2.png)
+
+
   - ¿Qué hizo **Docker Compose** por nosotros? Explicar con detalle.
+
+Basicamente el docker-compose realizó todos los pasos que realizamos en el punto anterior basandose en el archivo .yml. Es decir, creó (y puso en ejecución) los contenedores `tp3_app_1` (equivalente a web) y `tp3_db_1` (equivalente a db), creo una red del tipo bridge denominada `tp3_default` (equivalente a mybridge) que conecta la app web con la base de datos y por último asignó un volumen denominado `tp3_redis_data`.
+
   - Desde el directorio donde se encuentra el archivo `docker-compose.yaml` ejecutar:
   ```bash
   docker-compose down
   ```
+
+  ![3.3](/TP3/img/3.3.png)
  
 #### 4- Aumentando la complejidad, análisis de otro sistema distribuido.
 Este es un sistema compuesto por:
