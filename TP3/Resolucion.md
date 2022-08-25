@@ -28,7 +28,8 @@
     - Mostrar detalles de la red `mybridge` con Docker.
 
 ![1.3](/TP3/img/1.3.png)
-    - ¿Qué comandos utilizó?
+
+- ¿Qué comandos utilizó?
 
 Los comandos que utilize fueron "docker ps" para ver los puertos abiertos, y "docker network inspect mybridge" para mostrar detalles de la red mybridge.
 
