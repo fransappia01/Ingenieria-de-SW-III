@@ -38,7 +38,7 @@ Los comandos que utilize fueron "docker ps" para ver los puertos abiertos, y "do
 ```python
 import os
 
-from flask import Flask
+from flask import Flask   
 from redis import Redis
 
 
@@ -179,10 +179,154 @@ Pasos:
 cd example-voting-app
 docker-compose -f docker-compose-javaworker.yml up -d
 ```
+
+![4](/TP3/img/4.png)
+
 - Una vez terminado acceder a http://localhost:5000/ y http://localhost:5001
 - Emitir un voto y ver el resultado en tiempo real.
 - Para emitir más votos, abrir varios navegadores diferentes para poder hacerlo
+
+Puerto 5000:
+
+![4.1](/TP3/img/4.1.png)
+
+Puerto 5001:
+
+![4.2](/TP3/img/4.2.png)
+
 - Explicar como está configurado el sistema, puertos, volumenes componenetes involucrados, utilizar el Docker compose como guía.
+
+Se crearon cinco contenedores:
+
+![4.3](/TP3/img/4.3.png)
+
+Tenemos dos redes 'example-voting-app_back-tier' y 'example-voting-app_front-tier'.
+Los 5 contenedores forman parte de la red back pero solo dos contenedores forman parte de la red front (vote y result). Estan publicados en los puertoss 5000 y 5001 respectivamente. Lo vemos a continuacion y tambien en el archivo .yml.
+
+```bash
+PS C:\Users\Francisco\Desktop\example-voting-app> docker network inspect example-voting-app_back-tier
+[
+    {
+        "Name": "example-voting-app_back-tier",
+        "Id": "28128162a1be9aaee5053a7945e7033c5d525eb6595dafdb73bf4143d624ffa3",
+        "Created": "2022-08-25T17:26:00.588503531Z",
+        "Scope": "local",
+        "Driver": "bridge",
+        "EnableIPv6": false,
+        "IPAM": {
+            "Driver": "default",
+            "Options": null,
+            "Config": [
+                {
+                    "Subnet": "172.22.0.0/16",
+                    "Gateway": "172.22.0.1"
+                }
+            ]
+        },
+        "Internal": false,
+        "Attachable": true,
+        "Ingress": false,
+        "ConfigFrom": {
+            "Network": ""
+        },
+        "ConfigOnly": false,
+        "Containers": {
+            "18a2382c6b09f87ca12057d60602facd76b9380c646087d8d7274b62eaa24078": {
+                "Name": "db",
+                "EndpointID": "1d126ea68dff2fa1dd5c3f9d6d59e3f350dd137f8969d5a30ba08d95a5d3797f",
+                "MacAddress": "02:42:ac:16:00:04",
+                "IPv4Address": "172.22.0.4/16",
+                "IPv6Address": ""
+            },
+            "2b9f6f4ec10a81ab7b8fb4ca78411961823724584c1a337379819ddd6eafee63": {
+                "Name": "example-voting-app_worker_1",
+                "EndpointID": "fa3f42a72703f2dc2441a7a9edbd3281178c48a3bf65361c1460251f20954b0d",
+                "MacAddress": "02:42:ac:16:00:02",
+                "IPv4Address": "172.22.0.2/16",
+                "IPv6Address": ""
+            },
+            "7851dcd50abd1ab38ae06861c1758f6f6843e9a2cd7c57c5a3c45c6254de85e5": {
+                "Name": "example-voting-app_vote_1",
+                "EndpointID": "811b98cf059d096b72b98a38a6bc46fee53f1cd9b8502252033367331e210739",
+                "MacAddress": "02:42:ac:16:00:05",
+                "IPv4Address": "172.22.0.5/16",
+                "IPv6Address": ""
+            },
+            "79bcdbb9963f6596599b231454f0124fad4b833ef6970a7fbc27aca35af03209": {
+                "Name": "example-voting-app_result_1",
+                "EndpointID": "f01ce06d7040a0ceaeaef4809440fd4eb27e8bb5235d22a83cb41973b470e115",
+                "MacAddress": "02:42:ac:16:00:06",
+                "IPv4Address": "172.22.0.6/16",
+                "IPv6Address": ""
+            },
+            "7e9a2fba92f63a469a57349ffb02912afc2119810b66291d8115e88573a7271d": {
+                "Name": "redis",
+                "EndpointID": "ab4ef907473e819d2da7eb3878689e744e1863fe6e3d9d017cf9d68d2919765e",
+                "MacAddress": "02:42:ac:16:00:03",
+                "IPv4Address": "172.22.0.3/16",
+                "IPv6Address": ""
+            }
+        },
+        "Options": {},
+        "Labels": {
+            "com.docker.compose.network": "back-tier",
+            "com.docker.compose.project": "example-voting-app",
+            "com.docker.compose.version": "1.29.2"
+        }
+    }
+]
+
+PS C:\Users\Francisco\Desktop\example-voting-app> docker network inspect example-voting-app_front-tier
+[
+    {
+        "Name": "example-voting-app_front-tier",
+        "Id": "e9385b66aa1052d9731bed3e06e2732080ea7b423ffaa638172c4b7074eb778f",
+        "Created": "2022-08-25T17:26:00.451924449Z",
+        "Scope": "local",
+        "Driver": "bridge",
+        "EnableIPv6": false,
+        "IPAM": {
+            "Driver": "default",
+            "Options": null,
+            "Config": [
+                {
+                    "Subnet": "172.21.0.0/16",
+                    "Gateway": "172.21.0.1"
+                }
+            ]
+        },
+        "Internal": false,
+        "Attachable": true,
+        "Ingress": false,
+        "ConfigFrom": {
+            "Network": ""
+        },
+        "ConfigOnly": false,
+        "Containers": {
+            "7851dcd50abd1ab38ae06861c1758f6f6843e9a2cd7c57c5a3c45c6254de85e5": {
+                "Name": "example-voting-app_vote_1",
+                "EndpointID": "a2d1f61cffeb82167b26b1c62ca98dd480cfd8b74362b8fcc5432ba608319461",
+                "MacAddress": "02:42:ac:15:00:03",
+                "IPv4Address": "172.21.0.3/16",
+                "IPv6Address": ""
+            },
+            "79bcdbb9963f6596599b231454f0124fad4b833ef6970a7fbc27aca35af03209": {
+                "Name": "example-voting-app_result_1",
+                "EndpointID": "0ed6d18f89508a4d07d43f6c905ef497b47fbbbdf43266aa9dcf9b2afa19529d",
+                "MacAddress": "02:42:ac:15:00:02",
+                "IPv4Address": "172.21.0.2/16",
+                "IPv6Address": ""
+            }
+        },
+        "Options": {},
+        "Labels": {
+            "com.docker.compose.network": "front-tier",
+            "com.docker.compose.project": "example-voting-app",
+            "com.docker.compose.version": "1.29.2"
+        }
+    }
+]
+```
 
 #### 5- Análisis detallado
 - Exponer más puertos para ver la configuración de Redis, y las tablas de PostgreSQL con alguna IDE como dbeaver.
