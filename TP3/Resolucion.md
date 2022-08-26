@@ -330,6 +330,13 @@ PS C:\Users\Francisco\Desktop\example-voting-app> docker network inspect example
 
 #### 5- Análisis detallado
 - Exponer más puertos para ver la configuración de Redis, y las tablas de PostgreSQL con alguna IDE como dbeaver.
+
+En esta parte tuve que cambiar el archivo 'docker-compose-javaworker.yml' donde agregamos los puertos 5432 para poderlo conectar a la base de datos.
+
+![4.4](/TP3/img/4.4.png)
+
+![4.5](/TP3/img/4.5.png)
+
 - Revisar el código de la aplicación Python `example-voting-app\vote\app.py` para ver como envía votos a Redis.
 - Revisar el código del worker `example-voting-app\worker\src\main\java\worker\Worker.java` para entender como procesa los datos.
 - Revisar el código de la aplicacion que muestra los resultados `example-voting-app\result\server.js` para entender como muestra los valores.
