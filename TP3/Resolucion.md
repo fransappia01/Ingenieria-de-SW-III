@@ -337,6 +337,7 @@ En esta parte tuve que cambiar el archivo 'docker-compose-javaworker.yml' donde 
 
 ![4.5](/TP3/img/4.5.png)
 
+![5](/TP3/img/5.png)
 - Revisar el código de la aplicación Python `example-voting-app\vote\app.py` para ver como envía votos a Redis.
 - Revisar el código del worker `example-voting-app\worker\src\main\java\worker\Worker.java` para entender como procesa los datos.
 - Revisar el código de la aplicacion que muestra los resultados `example-voting-app\result\server.js` para entender como muestra los valores.
