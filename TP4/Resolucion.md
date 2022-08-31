@@ -35,6 +35,8 @@ Se crearon estos 15 contenedores:
 - edge-router: punto de ingreso al sistema
 - front-end: es la puerta de enlace de API. Los clientes llaman a esta API gateway, en lugar de llamar a los servicios directamente.
 
+![2.2](/TP4/img/2.2.png)
+
 2. Clonar algunos de los repositorios con el código de las aplicaciones
 ```bash
 cd socks-demo
