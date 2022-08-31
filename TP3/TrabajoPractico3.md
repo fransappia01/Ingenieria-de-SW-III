@@ -27,6 +27,12 @@ Detrás de escena, Docker Engine crea los puentes de Linux, las interfaces inter
 
 (Imagen: https://www.docker.com/blog/understanding-docker-networking-drivers-use-cases/ )
 
+---
+host es mi computadora
+
+db y web son dos contenedores (son una imagen de docker con una app corriendo)
+
+---
 
 #### Que es docker compose?
 
@@ -153,8 +159,268 @@ docker-compose -f docker-compose-javaworker.yml up -d
 #### 5- Análisis detallado
 - Exponer más puertos para ver la configuración de Redis, y las tablas de PostgreSQL con alguna IDE como dbeaver.
 - Revisar el código de la aplicación Python `example-voting-app\vote\app.py` para ver como envía votos a Redis.
+``` python
+from flask import Flask, render_template, request, make_response, g
+from redis import Redis
+import os
+import socket
+import random
+import json
+import logging
+
+option_a = os.getenv('OPTION_A', "Cats")    #se definen las dos opciones, las cuales voy a poder elegir cuando vaya a votar
+option_b = os.getenv('OPTION_B', "Dogs")
+hostname = socket.gethostname()
+
+app = Flask(__name__)
+
+gunicorn_error_logger = logging.getLogger('gunicorn.error')
+app.logger.handlers.extend(gunicorn_error_logger.handlers)
+app.logger.setLevel(logging.INFO)
+
+def get_redis():
+    if not hasattr(g, 'redis'):
+        g.redis = Redis(host="redis", db=0, socket_timeout=5)
+    return g.redis
+
+@app.route("/", methods=['POST','GET'])
+def hello():
+    voter_id = request.cookies.get('voter_id')
+    if not voter_id:
+        voter_id = hex(random.getrandbits(64))[2:-1]
+#si ahí no se generó se crea un numero al azar en hexa de 64 bits y se asigna a esa variable.
+    vote = None
+
+    if request.method == 'POST':
+        redis = get_redis()
+        vote = request.form['vote']
+        app.logger.info('Received vote for %s', vote)
+        data = json.dumps({'voter_id': voter_id, 'vote': vote})
+        redis.rpush('votes', data)
+
+#a traves del metodo POST se envia al voto. Al realizarse un post, los resultados de la votación se almacenan en un Json llamado data conformado por las claves voter_id y vote con sus respectivos valores, y se almacenan en votes de la instancia de redis mediante la función rpush.
+
+    resp = make_response(render_template(
+        'index.html',
+        option_a=option_a,
+        option_b=option_b,
+        hostname=hostname,
+        vote=vote,
+    ))
+    resp.set_cookie('voter_id', voter_id)
+    return resp
+
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=80, debug=True, threaded=True)
+```
+
+
 - Revisar el código del worker `example-voting-app\worker\src\main\java\worker\Worker.java` para entender como procesa los datos.
+
+``` java
+  package worker;
+
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.exceptions.JedisConnectionException;
+import java.sql.*;
+import org.json.JSONObject;
+
+class Worker {
+  public static void main(String[] args) {
+    try {
+      Jedis redis = connectToRedis("redis");
+      Connection dbConn = connectToDB("db");
+
+      System.err.println("Watching vote queue");
+
+      while (true) {
+        String voteJSON = redis.blpop(0, "votes").get(1);
+        JSONObject voteData = new JSONObject(voteJSON);
+        String voterID = voteData.getString("voter_id");
+        String vote = voteData.getString("vote");
+
+        System.err.printf("Processing vote for '%s' by '%s'\n", vote, voterID);
+        updateVote(dbConn, voterID, vote);
+      }
+    } catch (SQLException e) {
+      e.printStackTrace();
+      System.exit(1);
+    }
+  }
+
+  static void updateVote(Connection dbConn, String voterID, String vote) throws SQLException {
+    PreparedStatement insert = dbConn.prepareStatement(
+      "INSERT INTO votes (id, vote) VALUES (?, ?)");
+    insert.setString(1, voterID);
+    insert.setString(2, vote);
+//esta funcion guarda los datos de los votos en una base de datos a traves de una sentencia SQL. Lo registra como 1 o 2 al voto de perro o gato, y ademas guarda un voter_id por cada voto. A taves de update Vote se ejecuta la consulta a postgres.
+    try {
+      insert.executeUpdate();
+    } catch (SQLException e) {
+      PreparedStatement update = dbConn.prepareStatement(
+        "UPDATE votes SET vote = ? WHERE id = ?");
+      update.setString(1, vote);
+      update.setString(2, voterID);
+      update.executeUpdate();
+    }
+  }
+
+  static Jedis connectToRedis(String host) {
+    Jedis conn = new Jedis(host);
+
+    while (true) {
+      try {
+        conn.keys("*");
+        break;
+      } catch (JedisConnectionException e) {
+        System.err.println("Waiting for redis");
+        sleep(1000);
+      }
+    }
+
+    System.err.println("Connected to redis");
+    return conn;
+  }
+
+  static Connection connectToDB(String host) throws SQLException {
+    Connection conn = null;
+
+    try {
+
+      Class.forName("org.postgresql.Driver");
+      String url = "jdbc:postgresql://" + host + "/postgres";
+
+      while (conn == null) {
+        try {
+          conn = DriverManager.getConnection(url, "postgres", "postgres");
+        } catch (SQLException e) {
+          System.err.println("Waiting for db");
+          sleep(1000);
+        }
+      }
+
+      PreparedStatement st = conn.prepareStatement(
+        "CREATE TABLE IF NOT EXISTS votes (id VARCHAR(255) NOT NULL UNIQUE, vote VARCHAR(255) NOT NULL)");
+      st.executeUpdate();
+
+    } catch (ClassNotFoundException e) {
+      e.printStackTrace();
+      System.exit(1);
+    }
+
+    System.err.println("Connected to db");
+    return conn;
+  }
+
+  static void sleep(long duration) {
+    try {
+      Thread.sleep(duration);
+    } catch (InterruptedException e) {
+      System.exit(1);
+    }
+  }
+}
+```
+
 - Revisar el código de la aplicacion que muestra los resultados `example-voting-app\result\server.js` para entender como muestra los valores.
+
+``` javascript
+var express = require('express'),
+    async = require('async'),
+    pg = require('pg'),     //postgres
+    { Pool } = require('pg'),
+    path = require('path'),
+    cookieParser = require('cookie-parser'),
+    bodyParser = require('body-parser'),
+    methodOverride = require('method-override'),
+    app = express(),
+    server = require('http').Server(app),
+    io = require('socket.io')(server);
+
+io.set('transports', ['polling']);
+
+var port = process.env.PORT || 4000;
+
+io.sockets.on('connection', function (socket) {
+
+  socket.emit('message', { text : 'Welcome!' });
+
+  socket.on('subscribe', function (data) {
+    socket.join(data.channel);
+  });
+});
+
+var pool = new pg.Pool({
+  connectionString: 'postgres://postgres:postgres@db/postgres'
+});
+
+async.retry(
+  {times: 1000, interval: 1000},
+  function(callback) {
+    pool.connect(function(err, client, done) {
+      if (err) {
+        console.error("Waiting for db");
+      }
+      callback(err, client);
+    });
+  },
+  function(err, client) {
+    if (err) {
+      return console.error("Giving up");
+    }
+    console.log("Connected to db");
+    getVotes(client);
+  }
+);
+//se conecta con postgres db
+function getVotes(client) {
+  client.query('SELECT vote, COUNT(id) AS count FROM votes GROUP BY vote', [], function(err, result) {
+    if (err) {
+      console.error("Error performing query: " + err);
+    } else {
+      var votes = collectVotesFromResult(result);
+      io.sockets.emit("scores", JSON.stringify(votes));
+    }
+
+    setTimeout(function() {getVotes(client) }, 1000);
+  });
+}
+//a traves de getVotes realiza una sentencia SELECT donde podemos ver todos los votos que se realizaron.
+
+function collectVotesFromResult(result) {
+  var votes = {a: 0, b: 0};
+
+  result.rows.forEach(function (row) {
+    votes[row.vote] = parseInt(row.count);
+  });
+
+  return votes;
+}
+
+app.use(cookieParser());
+app.use(bodyParser());
+app.use(methodOverride('X-HTTP-Method-Override'));
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header("Access-Control-Allow-Methods", "PUT, GET, POST, DELETE, OPTIONS");
+  next();
+});
+
+app.use(express.static(__dirname + '/views'));
+
+app.get('/', function (req, res) {
+  res.sendFile(path.resolve(__dirname + '/views/index.html'));
+});
+
+server.listen(port, function () {
+  var port = server.address().port;
+  console.log('App running on port ' + port);
+});
+
+```
+
 - Escribir un documento de arquitectura sencillo, pero con un nivel de detalle moderado, que incluya algunos diagramas de bloques, de sequencia, etc y descripciones de los distintos componentes involucrados es este sistema y como interactuan entre sí.
 
 ### Presentación del trabajo práctico 3
