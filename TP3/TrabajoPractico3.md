@@ -235,7 +235,7 @@ class Worker {
       System.err.println("Watching vote queue");
 
       while (true) {
-        String voteJSON = redis.blpop(0, "votes").get(1);
+        String voteJSON = redis.blpop(0, "votes").get(1); //con este pop desencola todo de la cola redis
         JSONObject voteData = new JSONObject(voteJSON);
         String voterID = voteData.getString("voter_id");
         String vote = voteData.getString("vote");
@@ -373,7 +373,7 @@ async.retry(
     getVotes(client);
   }
 );
-//se conecta con postgres db
+
 function getVotes(client) {
   client.query('SELECT vote, COUNT(id) AS count FROM votes GROUP BY vote', [], function(err, result) {
     if (err) {
@@ -386,8 +386,7 @@ function getVotes(client) {
     setTimeout(function() {getVotes(client) }, 1000);
   });
 }
-//a traves de getVotes realiza una sentencia SELECT donde podemos ver todos los votos que se realizaron.
-
+//a traves de getVotes realiza una sentencia SELECT donde podemos ver todos los votos que se realizaron. Basicamente lo que se hace en este archivo es mostrar los resultados de las votaciones que se guardann en la base de datos a traves de sentencias SQL.
 function collectVotesFromResult(result) {
   var votes = {a: 0, b: 0};
 
