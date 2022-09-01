@@ -18,3 +18,4 @@ En primer lugar, vemos la arquitectura principal de la aplicacion web en la cual
 
 En base a esto, se realizó un diagrama de secuencia para ver con mayor claridad como funciona cada uno de estos sistemas:
 
+![arq](/TP3/img/arq.png)
