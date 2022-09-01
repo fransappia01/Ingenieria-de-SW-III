@@ -37,6 +37,12 @@ Se crearon estos 15 contenedores:
 
 ![2.2](/TP4/img/2.2.png)
 
+La arquitectura es la siguiente:
+
+![arq](/TP4/img/arqui.png)
+
+Fuente: https://github.com/microservices-demo/microservices-demo/blob/master/internal-docs/design.md
+
 2. Clonar algunos de los repositorios con el código de las aplicaciones
 ```bash
 cd socks-demo
@@ -97,4 +103,11 @@ A traves de bases de datos. Como vimos antes, algunos servicios vienen acompaña
 *Catalogue* --> `docker-compose_catalogue-db_1`
 
 9. ¿Cuál es el componente encargado del procesamiento de la cola de mensajes?
+
+El componente encargado de esto es `docker-compose_queue-master_1`. 
+
 10. ¿Qué tipo de interfaz utilizan estos microservicios para comunicarse?
+
+Todos los servicios se comunican usando REST sobre HTTP. Este fue elegido debido a la simplicidad del desarrollo y las pruebas. Sus especificaciones API están en desarrollo.
+
+![100](/TP4/img/100.png)
