@@ -163,16 +163,35 @@ Maven tiene cuatro carpetas fuente por defecto:
 ```bash
 mvn clean package
 ```
+A la hora de tirar este comando me salia un error, pero lo solucioné agregando estas lineas de codigo al archivo pom.xml:
+```xml
+<properties>
+     <maven.compiler.source>1.8</maven.compiler.source>
+     <maven.compiler.target>1.8</maven.compiler.target>
+</properties>
+```
 
+![5](/TP5/img/5.png)
+
+
+Fuente de la solucion al problema: https://stackoverflow.com/questions/53034953/error-source-option-5-is-no-longer-supported-use-6-or-later-on-maven-compile
 - Analizar la salida del comando anterior y luego ejecutar el programa
+
+Salida: 
+
+![5.1](/TP5/img/5.1.png)
 
 ```
 java -cp target/ejemplo-1.0-SNAPSHOT.jar ar.edu.ucc.App
 ```
 
+![5.2](/TP5/img/5.2.png)
+
 #### 6- Manejo de dependencias
 
 - Crear un nuevo proyecto con artifactId **ejemplo-uber-jar**
+
+![6](/TP5/img/6.png)
 
 - Modificar el código de App.java para agregar utilizar una librería de logging:
 
@@ -198,6 +217,10 @@ public class App
 
 - Compilar el código e identificar el problema.
 
+Faltan las dependencias en el archivo pom.xml. Nunca se definieron esas dependencias en el pom.xml, que es necesario para que puedan ser usadas en la app.java
+
+![6.1](/TP5/img/6.1.png)
+
 - Agregar la dependencia necesaria al pom.xml
 
 ```xml
@@ -208,22 +231,36 @@ public class App
     </dependency>
 ```
 
+Ahora funciona correctamente
+
+![6.2](/TP5/img/6.2.png)
+
 - Verificar si se genera el archivo jar y ejecutarlo
 
 ```bash
 java -cp target\ejemplo-uber-jar-1.0-SNAPSHOT.jar ar.edu.ucc.App
 ```
-
 - Sacar conclusiones y analizar posibles soluciones
+
+![6.6](/TP5/img/66.png)
+Nos da error porque no deifnimos las librerias de LoggerFactory.
+
 
 - Ahora, cjecutar la clase con el siguiente comando (en windows reemplazar `$HOME` por `%USERPROFILE%`, y separar por `;` en lugar de `:`)
 ```bash
  java -cp target/ejemplo-uber-jar-1.0-SNAPSHOT.jar:$HOME/.m2/repository/org/slf4j/slf4j-api/1.7.22/slf4j-api-1.7.22.jar:$HOME/.m2/repository/ch/qos/logback/logback-classic/1.2.1/logback-classic-1.2.1.jar:$HOME/.m2/repository/ch/qos/logback/logback-core/1.2.1/logback-core-1.2.1.jar ar.edu.ucc.App
 ```
 
+No  me dejo tirar este comando, por lo tanto tuve que agregar unas lineas de codigo en el archivo pom.xml.
+![6.9](/TP5/img/6.9.png)
+
+Fuente: https://maven.apache.org/plugins/maven-shade-plugin/examples/includes-excludes.html
 - Verificar que ahora resueltos los classpath la aplicación muestra el mensaje correcto
 
+![6.10](/TP5/img/6.10.png)
+
 - Implementar la opción de uber-jar: https://maven.apache.org/plugins/maven-shade-plugin/
+
 
 ```xml
   <build>
@@ -258,6 +295,8 @@ java -cp target\ejemplo-uber-jar-1.0-SNAPSHOT.jar ar.edu.ucc.App
 ```bash
 java -jar target\ejemplo-uber-jar.jar
 ```
+Este codigo poniendolo en el pom.xml me funciono correctamente utilizandolo desde la interfaz de Eclipse, pero por la terminal me tiraba el error de la foto [6.6]
+Por lo tanto, mi pom.xml sigue con el codigo que anduvo bien tanto en Eclipse como en la terminal.
 
 #### 7- Utilizar una IDE
   - Importar el proyecto anterior en Eclipse o Intellij como maven project:
@@ -274,6 +313,10 @@ java -jar target\ejemplo-uber-jar.jar
     - Ejecutar los goals de maven
     - Encontrar donde se puede cambiar la configuración de Maven.
     - etc.
+
+![6.7](/TP5/img/6.7.png)
+
+![6.8](/TP5/img/6.8.png)
 
 #### 8- Ejemplo con nodejs
 
