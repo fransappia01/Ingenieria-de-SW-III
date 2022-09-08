@@ -59,6 +59,8 @@ Hay exactamente dos tipos de repositorios: locales y remotos :
 
     Los repositorios locales y remotos están estructurados de la misma manera para que los scripts se puedan ejecutar en cualquier lado o se puedan sincronizar para su uso sin conexión. Sin embargo, el diseño de los repositorios es completamente transparente para el usuario de Maven.
 
+3. Repositorio central: localizado en http://repo.maven.apache.org/maven2/. Cuando se compila, maven primero intenta encontrar la dependencia en el repositorio local. Si no esta ahí, por defecto, activa la descarga desde este repositorio central. Es el repositorio remoto por defecto.
+
 - Entender Ciclos de vida de build
 
 Maven se basa en el concepto central de un ciclo de vida de construcción. Lo que esto significa es que el proceso para construir y distribuir un artefacto en particular (proyecto) está claramente definido.
@@ -103,8 +105,10 @@ Hay tres ciclos de vida de compilación integrados: **default**, **clean** y **s
 ```
 mvn clean install
 ```
-
+![3](/TP5/img/3.png)
 - Sacar conclusiones del resultado
+
+`mvn clean install` para decirle a Maven que haga el clean en cada módulo antes de ejecutar el install acción para cada módulo. Lo que hace esto es limpiar cualquier archivo compilado que tengas, asegurándote de que realmente estás compilando cada módulo desde cero. Es decir, el clean limpia todo y luego con install instalamos la serie de archivos desde el repositorio central que se indican dentro del pom.xml. Se crea el archivo .jar.
 
 #### 4- Maven Continuación
 
@@ -113,9 +117,13 @@ mvn clean install
 ```bash
 mvn archetype:generate -DgroupId=ar.edu.ucc -DartifactId=ejemplo -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false
 ```
+**PARA ESTE COMANDO EN POWERSHELL DE WINDOWS UTILIZAR COMILLAS**
+![4](/TP5/img/4.png)
 
+![4.1](/TP5/img/4.1.png)
 - Analizar la estructura de directorios generada:
 
+Con el comando `tree` podemos ver la siguiente estructura:
 ```
 .
 └── ejemplo
@@ -136,6 +144,19 @@ mvn archetype:generate -DgroupId=ar.edu.ucc -DartifactId=ejemplo -DarchetypeArti
 
 12 directories, 3 files
 ```
+Una de las principales características de Maven es que sigue el patrón de convención sobre configuración. Esto significa que debemos situar nuestras clases, tests o recursos en un lugar en concreto, para que luego Maven sea capaz de tratarlos correctamente.
+
+
+Maven tiene cuatro carpetas fuente por defecto:
+
+1.  `src/main/java` : donde guardaremos nuestras clases java fuente. Debajo de esta carpeta situaremos nuestras clases en distintos paquetes.
+
+
+2. `src/main/resources` : aquí almacenaremos los recursos (ficheros xml, ficheros de propiedades, imagenes, …) que pueda necesitar las clases java de nuestro proyecto. Igualmente aquí tienen que ir los ficheros de configuración de Spring o Hibernate por ejemplo.
+
+3.  `src/test/java` : en dicha carpeta se guardan las clases de test que se encargarán de probar el correcto funcionamiento de nuestra aplicación. Aquí por ejemplo podemos guardar nuestros test unitarios de JUnit.
+
+4.  `src/test/resources` : en esta carpeta guardamos los recursos que usan los recursos.
 
 - Compilar el proyecto
 
