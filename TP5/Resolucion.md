@@ -295,7 +295,8 @@ Fuente: https://maven.apache.org/plugins/maven-shade-plugin/examples/includes-ex
 ```bash
 java -jar target\ejemplo-uber-jar.jar
 ```
-Este codigo poniendolo en el pom.xml me funciono correctamente utilizandolo desde la interfaz de Eclipse, pero por la terminal me tiraba el error de la foto [6.6]
+Este codigo poniendolo en el pom.xml me funciono correctamente utilizandolo desde la interfaz de Eclipse, pero por la terminal me tiraba el error de la foto [6.6].
+
 Por lo tanto, mi pom.xml sigue con el codigo que anduvo bien tanto en Eclipse como en la terminal.
 
 #### 7- Utilizar una IDE
@@ -327,6 +328,8 @@ Por lo tanto, mi pom.xml sigue con el codigo que anduvo bien tanto en Eclipse co
 npx create-react-app my-app
 ```
 
+![8](/TP5/img/8.png)
+
 - Ejecutar la aplicación
 ```bash
 cd my-app
@@ -334,6 +337,8 @@ npm start
 ```
 
 - La aplicación web estará disponible en http://localhost:3000
+
+![8.1](/TP5/img/8.1.png)
 
 - Analizar el manejo de paquetes y dependencias realizado por npm.
 
