@@ -361,6 +361,9 @@ $
 cd test
 make run
 ```
+
+ver como hacer andar el make run desde la interfaz, por consola no se puede
+
 - Acceder a la aplicación en: http://localhost:5000/
 - Explicar que hace una tool como cookiecutter, make y pip.
 
