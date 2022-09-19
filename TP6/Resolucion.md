@@ -188,7 +188,7 @@ docker-compose up -d
   - Explicar que sucedió!
   - ¿Para qué está la key `build.context` en el docker-compose.yml?
 
-  ver bien
+  Esto indica que se debe construir una imagen de acuerdo a lo especificado en el archivo Dockerfile y se usa como contexto el directorio actual.
 
 ![4.1](/TP6/img/4.1.png)
 
@@ -206,9 +206,38 @@ npx create-react-app my-app
     - Ejecutar **npm install** dentro durante el build.
     - Exponer el puerto 3000
   - Hacer un build de la imagen, nombrar la imagen **test-node**.
+
+ ```bash
+  docker build -t test-node .
+ ```
   - Ejecutar la imagen **test-node** publicando el puerto 3000.
+
+![5.2](/TP6/img/5.2.png)
+
   - Verificar en http://localhost:3000 que la aplicación está funcionando.
+
+![6](/TP6/img/5.png)
   - Proveer el Dockerfile y los comandos ejecutados como resultado de este ejercicio.
+
+ ```dockerfile  
+#especificamos que imagen usar
+FROM node:13.12.0-alpine AS dependencias
+#copiamos el json
+COPY package.json /tmp/
+#especificamos directorio de trabajo
+WORKDIR /tmp/
+#ejecuto el npm install durante el build
+RUN npm install
+
+FROM dependencias
+#copiamos de la imagen anterior los ejecutables
+COPY --from=DEPENDENCIAS /tmp/node_modules ./node_modules
+#copiamos todo lo de la carpeta, sin esto no funciona
+COPY . .
+#exponemos el puerto que vamos a usar
+EXPOSE 3000
+CMD npm run start
+ ```
 
 #### 6- Publicar la imagen en Docker Hub.
   - Crear una cuenta en Docker Hub si no se dispone de una.
