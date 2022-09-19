@@ -245,6 +245,8 @@ CMD npm run start
 ```bash
 docker login
 ```
+
+![6](/TP6/img/6.png)
   - Crear un tag de la imagen generada en el ejercicio 3. Reemplazar <mi_usuario> por el creado en el punto anterior.
 ```bash
 docker tag test-node <mi_usuario>/test-node:latest
@@ -253,4 +255,9 @@ docker tag test-node <mi_usuario>/test-node:latest
 ```bash
 docker push <mi_usuario>/test-node:latest
 ``` 
+
+![6.1](/TP6/img/6.1.png)
+
   - Como resultado de este ejercicio mostrar la salida de consola, o una captura de pantalla de la imagen disponible en Docker Hub.
+
+  ![6.2](/TP6/img/6.2.png)
