@@ -152,6 +152,11 @@ pipeline {
   - Obtener el código desde el repositorio de cada alumno (se puede crear un repositorio nuevo en github que contenga solamente el proyecto maven).
   - Generar y publicar los artefactos que se producen.
 
+En un principio, se me generaba el archivo .tar de manera INESTABLE. Por lo tanto, para solucionar esto tuve que cambiar el archivo POM.XML de la carpeta spring-boot en mi repo. Tuve que agregar las siguientes dependencias:
+
+![6.1](/TP7/img/6.1.png)
+
+Como resultado, anduvo correctamente
   ![6](/TP7/img/6.png)
   - Como resultado de este ejercicio proveer el script en un archivo **spring-boot/Jenkinsfile**
  
@@ -163,5 +168,10 @@ pipeline {
   - Generar y publicar en Dockerhub la imagen de docker ademas del Jar.
   - Se puede utilizar el [plugin de docker](https://docs.cloudbees.com/docs/admin-resources/latest/plugins/docker-workflow) o comandos de shell.
   - No poner usuario y password en el pipeline en texto plano, por ejemplo para conectarse a DockerHub, utilizar [credenciales de jenkins](https://github.com/jenkinsci/credentials-plugin/blob/master/docs/user.adoc) en su lugar.
+
+Creamos las credenciales a traves de Jetkins
+
+![7](/TP7/img/7.png)
+
   - Como resultado de este ejercicio proveer el script en un archivo **spring-boot/Jenkinsfile**
   - Referencia: https://tutorials.releaseworksacademy.com/learn/building-your-first-docker-image-with-jenkins-2-guide-for-developers

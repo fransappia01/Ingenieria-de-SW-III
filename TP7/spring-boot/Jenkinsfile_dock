@@ -4,6 +4,7 @@ pipeline {
     tools {
         // Install the Maven version configured as "M3" and add it to the path.
         maven "M3"
+         
     }
 
     stages {
@@ -23,9 +24,24 @@ pipeline {
                 // If Maven was able to run the tests, even if some of the test
                 // failed, record the test results and archive the jar file.
                 success {
-                    junit '**/target/surefire-reports/TEST-*.xml'
+                    
                     archiveArtifacts 'target/*.jar'
                 }
+            }
+        }
+         stage('Docker upload') {
+             environment {
+                DOCKER_CREDS = credentials('1fb76706-96e3-4982-b0a8-6af4dcb4db24')
+                'org.jenkinsci.plugins.docker.commons.tools.DockerTool' 'docker'
+            }
+            steps {
+                sh 'docker login -u $DOCKER_CREDS_USR -p $DOCKER_CREDS_PSW'
+                
+                sh 'docker build -t "test-jenkins" .'
+                
+                sh 'docker tag test-jenkins fransappia01/test-jenkins:latest'
+                
+                sh 'docker push fransappia01/test-jenkins:latest'
             }
         }
     }
