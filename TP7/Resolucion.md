@@ -156,7 +156,8 @@ En un principio, se me generaba el archivo .tar de manera INESTABLE. Por lo tant
 
 ![6.1](/TP7/img/6.1.png)
 
-Como resultado, anduvo correctamente
+Como resultado, anduvo correctamente:
+
   ![6](/TP7/img/6.png)
   - Como resultado de este ejercicio proveer el script en un archivo **spring-boot/Jenkinsfile**
  
@@ -175,3 +176,38 @@ Creamos las credenciales a traves de Jetkins
 
   - Como resultado de este ejercicio proveer el script en un archivo **spring-boot/Jenkinsfile**
   - Referencia: https://tutorials.releaseworksacademy.com/learn/building-your-first-docker-image-with-jenkins-2-guide-for-developers
+
+  Luego de muchisimos errores, pude realizar este ejercicio correctamente. Paso a explicar como los solucione:
+
+  1) El primer error que obtuve fue de ``docker not found``. Para solucionar esto lo primero que hice fue crear mi prpia imagen de jenkins e instalar docker adentro de ella, el dockerfile que utilize fue el siguiente (se encuentra en mi repo tambien ../tp7/docker):
+
+```Dockerfile
+FROM jenkins/jenkins:lts
+USER root
+RUN apt update && apt install -y \
+    ca-certificates \
+    curl \
+    gnupg \
+    lsb-release
+RUN mkdir -p /etc/apt/keyrings
+RUN curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" \
+  | tee /etc/apt/sources.list.d/docker.list > /dev/null
+RUN apt update && apt install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+RUN usermod -aG docker jenkins
+```
+
+Luego, realice un build con el comando `docker image build -t ttest-spring-boot`.
+
+Despues, para levantar el jenkins corri el siguiente comando desde la carpeta de jenkins:  `docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock -v C:/jenkins:/var/jenkins_home -p 8081:8080 -p 50000:50000 testt-spring-boot`
+
+![7.2](/TP7/img/7.2.png)
+
+
+2) En segundo lugar, tuve el error: `Error response from daemon: Get https://registry-1.docker.io/v2/library/hello-world 
+/manifests/latest: unauthorized: incorrect username or password`
+
+Este error, creo que se debe a que a la hora de crear las credenciales puse la contraseña correspondiente a mi cuenta de jenkins, cuando debo poner mi usuario y contraseña de mi cuenta de DOCKER. Sin embargo, lo que hice fue borrar la credencial anterior y crear otra nueva. En ese caso, funcionó.
+
+![7.1](/TP7/img/7.1.png)
+![7](/TP7/img/7%20anduvo.png)

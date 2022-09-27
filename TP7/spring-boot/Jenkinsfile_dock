@@ -31,8 +31,8 @@ pipeline {
         }
          stage('Docker upload') {
              environment {
-                DOCKER_CREDS = credentials('1fb76706-96e3-4982-b0a8-6af4dcb4db24')
-                'org.jenkinsci.plugins.docker.commons.tools.DockerTool' 'docker'
+                DOCKER_CREDS = credentials('f7196ac5-5372-401e-923e-d6164d17727a')
+                
             }
             steps {
                 sh 'docker login -u $DOCKER_CREDS_USR -p $DOCKER_CREDS_PSW'
