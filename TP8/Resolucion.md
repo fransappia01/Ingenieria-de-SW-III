@@ -4,6 +4,18 @@
   - Listar los pros y contras de este tipo de herramientas
   - Sacar conclusiones
 
+
+Ventajas:
+
+    - Alta disponibilidad: nos permite un acceso constante a la aplicacion.
+    - Bajo costo: el alojamiento en la nube es más económico que el alojamiento local
+    - Escalabilidad
+
+Desventajas:
+
+    - Disponibilidad de datos no es para todos: se limita la posibilidad de ajustar el servidor a las necesidades individuales.
+    - Los costos pueden aumentar con el tiempo luego de haber comenzado el desarrollo del producto. Al depender del trafico de red --> a mayor trafico, mayores costos.
+
 #### 2- Configurando GitHub Actions
   - Repetir el ejercicio 6 del trabajo práctico [trabajo práctico 7](07-servidor-build.md) para el proyecto **spring-boot**, pero utilizando GitHub Actions.
   - En GitHub, en el repositorio donde se encuentra la aplicación **spring-boot**, ir a la opción **Actions** y crear un nuevo `workflow`.
@@ -58,7 +70,10 @@ jobs:
   - Guardar el archivo (hacemos commit directamente en GitHub por ejemplo) y ejecutamos manualmente el pipeline.
   - Explicar que realiza el pipeline anterior.
 
-Lo que hice en este ejercicio, fue primero ubicarme en la carpeta donde tenia mi `spring-boot` que estaba en mi repo de github en `Ingenieria-de-SWiii/TP6/spring-boot`. 
+Lo que hice en este ejercicio, fue primero ubicarme en la carpeta donde tenia mi `spring-boot` que estaba en mi repo de github en `Ingenieria-de-SWiii/TP6/spring-boot`. Luego entre a la pestaña de **Actions**, ahi entre a la seccion de **CI** y ahi cree el workflow, el cual despues le hice un commit desde la interfaz de github.
+
+
+El workflow utilizado fue el siguiente:
 
 ```yml
 # This is a basic workflow to help you get started with Actions
@@ -106,6 +121,12 @@ jobs:
           cd TP6/spring-boot/
           mvn -B package --file pom.xml
 ```
+
+Como resultado obtuve, que se corrio de manera correcta.
+
+
+![2](/TP8/img/2.png)
+
 
 #### 3- Utilizando nuestros proyectos con Docker
   - Repetir el ejercicio 7 del trabajo práctico [trabajo práctico 7](07-servidor-build.md), pero utilizando GitHub Actions.
