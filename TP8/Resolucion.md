@@ -132,6 +132,113 @@ Como resultado obtuve, que se corrio de manera correcta.
   - Repetir el ejercicio 7 del trabajo práctico [trabajo práctico 7](07-servidor-build.md), pero utilizando GitHub Actions.
   - Generar `secretos` y los `pasos` necesarios para subir la imagen a Docker Hub. [Referencia](https://github.com/actions/starter-workflows/blob/main/ci/docker-publish.yml)
 
+  Lo primero que hice fue crear los `secretos`, siguiendo estos pasos:
+
+1. Cree una cuenta e inicie sesión en Docker Hub .
+2. Vaya a Configuración de la cuenta => Seguridad: enlace y haga clic en Nuevo token de acceso .
+3. Proporcione el nombre de su token de acceso, guárdelo y copie el valor (no podrá volver a verlo, deberá volver a generarlo).
+4. Vaya a la configuración de sus secretos de GitHub (Configuración => Secretos, url https://github.com/{your_username}/{your_repository_name}/settings/secrets/actions ).
+5. Cree dos secretos (no serán visibles para otros usuarios y se usarán en las compilaciones no bifurcadas) 
+* DOCKERHUB_USERNAME : con el nombre de su cuenta de Docker Hub (no lo confunda con la cuenta de GitHub)
+* DOCKERHUB_TOKEN - con el valor pegado de un token generado en el punto 3.
+
+A la hora de crear secretos debo apretar el boton de `New repository secret` en la pestaña de Secretos.
+
+![3](/TP8/img/3.png)
+
+Archivo utilizado en GithubActions:
+
+```yml
+# This is a basic workflow to help you get started with Actions
+
+name: build and push
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  push:
+    paths:
+    - 'TP6/spring-boot/**'
+    branches: [ main ]
+  pull_request:
+    paths:
+    - 'TP6/spring-boot/**'  
+    branches: [ main ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      # Install Java JDK with maven
+      - name: Set up JDK 8
+        uses: actions/setup-java@v2
+        with:
+          java-version: '8'
+          distribution: 'adopt'
+          cache: maven
+          
+      # Compile the application
+      - name: Build with Maven
+        run: |
+          cd TP6/spring-boot/
+          mvn -B package --file pom.xml
+  # define job to build and publish docker image
+  build-and-push-docker-image:
+    name: Build Docker image and push to repositories
+    # run only when code is compiling and tests are passing
+    runs-on: ubuntu-latest
+
+    # steps to perform in job
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # setup Docker buld action
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      
+      - name: Build image and push to Docker Hub and GitHub Container Registry
+        uses: docker/build-push-action@v2
+        with:
+          # relative path to the place where source code with Dockerfile is located
+          context: ./TP6/spring-boot/
+          # Note: tags has to be all lower-case
+          tags: |
+            fransappia01/springboot-gitactions:latest
+          # build on feature branches, push only on main branch
+          push: true
+
+      - name: Image digest
+        run: echo ${{ steps.docker_build.outputs.digest }}
+```
+
+
+En mi archivo yml tuve que cambiar la linea 77: `push: ${{ github.ref == 'refs/heads/main' }}` por `push: true` para que me envie la imagen a DockerHub. Luego anduvo correctamente.
+
+![3.1](/TP8/img/3.1.png)
+
+![3.2](/TP8/img/3.2.png)
+
+Referencia para crear el archivo .yml: https://event-driven.io/en/how_to_buid_and_push_docker_image_with_github_actions/
+
 #### 4- Opcional: Configurando CircleCI
   - De manera similar al ejercicio 2, configurar un build job para el mismo proyecto, pero utilizando CircleCI
   - Para capturar artefactos, utilizar esta referencia: https://circleci.com/docs/2.0/artifacts/
