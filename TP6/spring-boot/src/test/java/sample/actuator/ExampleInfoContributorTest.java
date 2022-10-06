@@ -16,6 +16,6 @@ public class ExampleInfoContributorTest {
 		ExampleInfoContributor exampleInfoContributor = new ExampleInfoContributor();
 		exampleInfoContributor.contribute(builder);
 		
-		verify(builder).withDetail(any(),any());
+		verify(builder).withDetail(any(), any());
 	}
 }
