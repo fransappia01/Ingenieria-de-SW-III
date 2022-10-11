@@ -111,6 +111,30 @@ public class ExampleInfoContributorTest {
   - Cuando se llame por primera vez al método **getHelloMessage** retorne "Hola Hola"
   - Cuando se llame por segunda vez al método **getHelloMessage** retorne "Hello Hello"
 
+En el archivo `HelloWorldServiceTest.java` agregamos el siguiente metodo con sus respectivas librerias (mock,when):
+
+```java
+	@Test
+	public void testMessage(){
+		
+		HelloWorldService helloWorldService = mock(HelloWorldService.class);
+		
+		when(helloWorldService.getHelloMessage()).thenReturn("Hola Hola").thenReturn("Hello Hello");
+		
+		assertEquals("Hola Hola", "Hola Hola", helloWorldService.getHelloMessage());
+		
+		assertEquals("Hello Hello", "Hello Hello", helloWorldService.getHelloMessage());
+		
+	}
+}
+```
+![3.1](/TP9/img/3.1.png)
+
+En este metodo vemos que para el primer llamado nos va a retornar "Hola hola" y para la segunda vez nos devuelve "Hello hello". Los AssertEqual verifican si los llamados coinciden con lo que debe ser.
+
+
+
+
 - Crear la siguiente clase **AbstractTest**
 ```java
 package sample.actuator;
@@ -183,3 +207,54 @@ public class SampleControllerTest extends AbstractTest {
   
 #### 6- Capturar los unit tests como parte del proceso de CI/CD
   - Hacer los cambios en Jenkins (o en la herramienta de CICD utilizada) si es necesario, para capturar los resultados de los unit tests y mostrarlos en la ejecución del build.
+
+  Utilizando `mvn -B test`:
+
+```yml
+  # This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  push:
+    paths:
+    - 'TP6/spring-boot/**'
+    branches: [ main ]
+  pull_request:
+    paths:
+    - 'TP6/spring-boot/**'  
+    branches: [ main ]
+
+# Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      # Install Java JDK with maven
+      - name: Set up JDK 8
+        uses: actions/setup-java@v2
+        with:
+          java-version: '8'
+          distribution: 'adopt'
+          cache: maven
+          
+# Compile the application
+      - name: Build with Maven
+        run: |
+          cd TP6/spring-boot/
+          mvn -B test --file pom.xml
+  ```
+
+  ![6](/TP9/img/6.png)
