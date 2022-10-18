@@ -7,11 +7,11 @@ on:
   # Triggers the workflow on push or pull request events but only for the master branch
   push:
     paths:
-    - 'TP6/spring-boot/**'
+    - 'Tcd TP10/proyecto/spring-boot-it/output/**'
     branches: [ main ]
   pull_request:
     paths:
-    - 'TP6/spring-boot/**'  
+    - 'cd TP10/proyecto/spring-boot-it/output/**'  
     branches: [ main ]
 
 # Allows you to run this workflow manually from the Actions tab
@@ -38,9 +38,9 @@ jobs:
           cache: maven
           
 # Compile the application
-      - name: Build with Maven
+      - name: Build with Junit
         run: |
-          cd TP6/spring-boot/
-          mvn -B test --file pom.xml
+          cd TP10/proyecto/spring-boot-it/output/
+          junit result.xml
   
        
