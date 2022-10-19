@@ -408,3 +408,52 @@ npx codeceptjs run --steps --reporter mocha-multi
 
 #### 5- Integrar la ejecución en Jenkins
 - Utilizando la funcionalidad de Junit test en Jenkins colectar estos resultados de la ejecución después del deployment.
+
+![5](/TP10/img/5.png)
+
+![5.1](/TP10/img/5.1.png)
+
+Pipeline:
+
+```
+pipeline {
+    agent any
+
+    tools {
+        // Install the Maven version configured as "M3" and add it to the path.
+        maven "M3"
+    }
+
+    stages {
+        stage('Build') {
+            steps {
+                // Get some code from a GitHub repository
+                git 'https://github.com/fransappia01/Ingenieria-de-SW-III'
+                
+                dir('spring-boot'){
+                    sh("mvn package")
+                }
+
+            }
+
+            post {
+                // If Maven was able to run the tests, even if some of the test
+                // failed, record the test results and archive the jar file.
+                success {
+                    dir('spring-boot'){
+                    archiveArtifacts 'target/*.jar'
+                }
+            }
+        }
+        }
+    stage('Run Tests'){
+        steps{
+            dir ('TP10/proyecto/spring-boot-it/output'){
+                
+                junit 'result.xml'
+            }
+        }
+    }
+}
+}
+```
