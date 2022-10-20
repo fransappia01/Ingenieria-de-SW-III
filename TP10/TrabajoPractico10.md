@@ -226,3 +226,5 @@ npx codeceptjs run --steps --reporter mocha-multi
 
 #### 5- Integrar la ejecución en Jenkins
 - Utilizando la funcionalidad de Junit test en Jenkins colectar estos resultados de la ejecución después del deployment.
+
+
