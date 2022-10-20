@@ -5,15 +5,16 @@ COPY src /tmp/src/
 WORKDIR /tmp/
 RUN mvn -B -s /usr/share/maven/ref/settings-docker.xml package
 
-FROM openjdk:8-jre-alpine
+FROM java:8-jre-alpine
+
+RUN apk add --no-cache bash
+
+WORKDIR /app
+
+COPY target/*.jar ./spring-boot-application.jar
+
+ENV PORT=8080
 
 EXPOSE 8080
 
-RUN mkdir /app
-COPY --from=MAVEN_TOOL_CHAIN /tmp/target/*.jar /app/spring-boot-application.jar
-
-ENV JAVA_OPTS="-Xms32m -Xmx128m"
-
-ENTRYPOINT exec java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar /app/spring-boot-application.jar
-
-HEALTHCHECK --interval=1m --timeout=3s CMD wget -q -T 3 -s http://localhost:8080/actuator/health/ || exit 1
+CMD ["java", "-Xms32m", "-Xmx128m", "-jar", "-Dserver.port=${PORT}", "-Djava.security.egd=file:/dev/./urandom", "spring-boot-application.jar"]
