@@ -314,7 +314,7 @@ Y tambien reemplazar la seccion helpers de codecept.conf.js como se indica pero 
   	  }
   	}
   }
-
+```
 Pipeline:
 
 ```
