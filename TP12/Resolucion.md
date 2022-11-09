@@ -146,3 +146,235 @@ $
   - Agregar un Job o un Stage para desplegar la aplicación en Heroku
   - Ejecutar los tests de Integración / UAT desde Jenkins y colectar los resultados utilizando esta instancia de la aplicación.
 
+En esta instancia vamos a realizar un pipeline que realice acciones en conjunto que ya vimos en trabajos practicos anteriores.
+
+1. En primer lugar creamos una carpeta llamada `spring-boot-it` dentro deL directorio `Ingenieria-de-sw-III/TP12/`.
+
+2. Dentro de esa carpeta ejecutamos el comando `npx create codeceptjs .`, y luego `npx codeceptjs init .`
+
+```powershell
+PS C:\Users\Francisco> cd '.\Documents\FRAN\----------CUARTO AÑO---------\Segundo trimestre\Ingenieria-de-SW-III\TP12\spring-boot-it\'
+PS C:\Users\Francisco\Documents\FRAN\----------CUARTO AÑO---------\Segundo trimestre\Ingenieria-de-SW-III\TP12\spring-boot-it> npx create-codeceptjs .
+npx: installed 32 in 15.078s
+
+
+ ╔═╗ ╦═╗ ╔═╗ ╔═╗ ╔╦╗ ╔═╗
+ ║   ╠╦╝ ║╣  ╠═╣  ║  ║╣
+ ╚═╝ ╩╚═ ╚═╝ ╩ ╩  ╩  ╚═╝
+
+ ╔═╗ ╔═╗ ╔╦╗ ╔═╗ ╔═╗ ╔═╗ ╔═╗ ╔╦╗  ╦ ╔═╗
+ ║   ║ ║  ║║ ║╣  ║   ║╣  ╠═╝  ║   ║ ╚═╗
+ ╚═╝ ╚═╝ ═╩╝ ╚═╝ ╚═╝ ╚═╝ ╩    ╩  ╚╝ ╚═╝
+
+
+ 🔌 Supercharged End 2 End Testing 🌟
+
+Creating CodeceptJS project in C:\Users\Francisco\Documents\FRAN\----------CUARTO AÑO---------\Segundo trimestre\Ingenieria-de-SW-III\TP12\spring-boot-it
+
+Powered by Playwright engine
+package.json file does not exist in current dir, creating it...
+Installing packages:  codeceptjs@3, @codeceptjs/ui, @codeceptjs/examples, @codeceptjs/configure, playwright@1
+
+> playwright@1.27.1 install C:\Users\Francisco\Documents\FRAN\----------CUARTO AÑO---------\Segundo trimestre\Ingenieria-de-SW-III\TP12\spring-boot-it\node_modules\playwright
+> node install.js
+
+
+> core-js@2.6.12 postinstall C:\Users\Francisco\Documents\FRAN\----------CUARTO AÑO---------\Segundo trimestre\Ingenieria-de-SW-III\TP12\spring-boot-it\node_modules\core-js
+> node -e "try{require('./postinstall')}catch(e){}"
+
+
+> electron@15.5.7 postinstall C:\Users\Francisco\Documents\FRAN\----------CUARTO AÑO---------\Segundo trimestre\Ingenieria-de-SW-III\TP12\spring-boot-it\node_modules\electron
+> node install.js
+
++ @codeceptjs/examples@1.2.1
++ @codeceptjs/configure@0.10.0
++ @codeceptjs/ui@0.4.7
++ codeceptjs@3.3.6
++ playwright@1.27.1
+added 462 packages from 293 contributors and audited 464 packages in 122.662s
+
+79 packages are looking for funding
+  run `npm fund` for details
+
+found 3 vulnerabilities (1 moderate, 2 high)
+  run `npm audit fix` to fix them, or `npm audit` for details
+Finished installing packages.
+
+What's next?
+
+Try CodeceptJS now with a demo project:
+➕ npm run codeceptjs:demo - executes codeceptjs tests for a demo project
+➕ npm run codeceptjs:demo:headless - executes codeceptjs tests headlessly (no window shown)
+➕ npm run codeceptjs:demo:ui - starts codeceptjs UI application for a demo project
+
+Initialize CodeceptJS for your project:
+🔨 npx codeceptjs init - initialize codeceptjs for current project (required)
+➕ npm run codeceptjs - runs codeceptjs tests for current project
+➕ npm run codeceptjs:headless - executes codeceptjs tests headlessly (no window shown)
+➕ npm run codeceptjs:ui - starts codeceptjs UI application for current project
+
+PS C:\Users\Francisco\Documents\FRAN\----------CUARTO AÑO---------\Segundo trimestre\Ingenieria-de-SW-III\TP12\spring-boot-it> npx codeceptjs init
+
+  Welcome to CodeceptJS initialization tool
+  It will prepare and configure a test environment for you
+
+Installing to C:\Users\Francisco\Documents\FRAN\----------CUARTO AÑO---------\Segundo trimestre\Ingenieria-de-SW-III\TP12\spring-boot-it
+? Do you plan to write tests in TypeScript? Yes
+? Where are your tests located? ./*_test.js
+? What helpers do you want to use? Playwright
+? Where should logs, screenshots, and reports to be stored? ./output
+? Do you want localization for tests? (See https://codecept.io/translation/) English (no localization)
+Configure helpers...
+? [Playwright] Base url of site to be tested https://fransappia01-springboot.herokuapp.com/
+? [Playwright] Show browser window Yes
+? [Playwright] Browser in which testing will be performed. Possible options: chromium, firefox, webkit or electron chromium
+
+Config created at C:\Users\Francisco\Documents\FRAN\----------CUARTO AÑO---------\Segundo trimestre\Ingenieria-de-SW-III\TP12\spring-boot-it\codecept.conf.ts
+Directory for temporary output files created at './output'
+Installing packages:  typescript, ts-node, @types/node
++ ts-node@10.9.1
++ @types/node@18.11.3
++ typescript@4.8.4
+added 18 packages from 53 contributors, updated 1 package and audited 482 packages in 38.648s
+
+79 packages are looking for funding
+  run `npm fund` for details
+
+found 3 vulnerabilities (1 moderate, 2 high)
+  run `npm audit fix` to fix them, or `npm audit` for details
+context
+TypeScript Definitions provide autocompletion in Visual Studio Code and other IDEs
+Definitions were generated in steps.d.ts
+
+ Almost ready... Next step:
+Creating a new test...
+----------------------
+? Feature which is being tested (ex: account, login, etc) spring-boot-heroku
+? Filename of a test spring-boot-heroku_test.js
+
+Test for spring-boot-heroku_test.js was created in C:\Users\Francisco\Documents\FRAN\----------CUARTO AÑO---------\Segundo trimestre\Ingenieria-de-SW-III\TP12\spring-boot-it\spring-boot-heroku_test.js
+
+--
+CodeceptJS Installed! Enjoy supercharged testing! 🤩
+Find more information at https://codecept.io
+```
+
+La url definida es: https://fransappia01-springboot.herokuapp.com/
+
+3. Luego modificamos el archivo `spring-boot-heroku_test.js` como se indica en el TP10:
+
+
+```javascript
+Feature('spring-boot');
+
+const expect = require('chai').expect;
+const {I} = inject();
+
+Scenario('Verify a successful call', async () => {
+	const res = await I.sendGetRequest('/');
+	expect(res.status).to.eql(200);
+});
+
+Scenario('Verify return value', async () => {
+	const res = await I.sendGetRequest('/');
+	//console.log(res);
+	expect(res.data.message).to.eql('Spring boot says hello from a Docker container');
+});
+```
+
+Y tambien reemplazar la seccion helpers de codecept.conf.js como se indica pero con la nueva url.
+
+```javascript
+	helpers: {
+		REST: {
+			endpoint: "https://fransappia01-springboot.herokuapp.com/",
+			onRequest: () => {
+			}
+		}
+	}
+  ```
+
+  4. Agregar esta parte de codigo en el archivo `codecept.conf.ts`: 
+
+```javascript
+  	mocha:  {
+  "reporterOptions": {
+    "codeceptjs-cli-reporter": {
+      "stdout": "-",
+      "options": {
+        "steps": true,
+      }
+    },
+    "mocha-junit-reporter": {
+      "stdout": "./output/console.log",
+      "options": {
+        "mochaFile": "./output/result.xml"
+      },
+      "attachments": true //add screenshot for a failed test
+  	  }
+  	}
+  }
+
+Pipeline:
+
+```
+pipeline {
+  agent any
+
+  tools {
+      // Install the Maven version configured as "M3" and add it to the path.
+       maven "M3"
+  }
+  stages {
+
+      stage('Build') {
+           steps {
+              // Get spring-boot folder from github repo
+              git 'https://github.com/fransappia01/Ingenieria-de-SW-III'
+                  
+               dir('spring-boot') {
+                   sh("mvn package")
+              }
+          }
+          post {
+               // If Maven was able to run the tests, even if some of the test
+               // failed, record the test results and archive the jar file.
+              success {
+                  dir('tp12/spring-boot') {
+                       archiveArtifacts 'target/*.jar'
+                  }
+              }
+          }
+      stage('Heroku Push and Deploy') {
+          steps {
+              dir('tp12/spring-boot') {
+              // sh "heroku create heroku-app"
+              sh "heroku container:push web --app=heroku-app"
+              sh "heroku container:release web --app=heroku-app"
+              }
+          }
+      }
+      stage('Install Dependencies') {
+          steps {
+              dir('TP12/spring-boot-it') {
+                  sh "npm install"
+                  sh "npm i mocha-junit-reporter mocha-multi --save"
+              }
+          }
+      }
+      stage('Run Integration Tests') {
+          steps {
+              dir('TP12/spring-boot-it') {
+                  sh "npx codeceptjs run --steps --reporter mocha-multi"
+              }
+          }
+      }
+      stage('Collect Integration Tests Report') {
+          steps {
+              dir('TP12/spring-boot-it/output') {
+                  junit 'result.xml'
+              }
+          }
+      }
+  }
+  ```
